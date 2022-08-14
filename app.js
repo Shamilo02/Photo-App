@@ -1,15 +1,25 @@
 import express from "express";
-
+import dotenv from "dotenv";
+import conn from "./db.js";
+import Pagerouter from "./routes/routerPage.js";
 const app = express();
-const port = 5000; 
+const port = 3000; 
 
-//* middleware
+dotenv.config();
+
+//* connected database 
+conn();
+
+//* view engine ejs
+app.set("view engine","ejs")
+
+//* middleware static public
 app.use(express.static('public'))
 
 
-app.get("/", (req,res) => {
-    res.send("Index sehifesi")
-})
+//& Router 
+
+app.use("/", Pagerouter)
 
 
 

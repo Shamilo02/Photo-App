@@ -4,6 +4,7 @@ import conn from "./db.js";
 import Pagerouter from "./routes/routerPage.js";
 import Photorouter from "./routes/routerPhotos.js";
 const app = express();
+// app.use(express.json())
 const port = 3000; 
 
 dotenv.config();
@@ -16,7 +17,7 @@ app.set("view engine","ejs")
 
 //* middleware static public
 app.use(express.static('public'))
-
+app.use(express.json())
 
 //& Router 
 

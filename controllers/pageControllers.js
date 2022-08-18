@@ -9,21 +9,16 @@ const getAbout = (req,res) =>{
         link: "about"
     })
 }
-const getBlog = (req,res) =>{
-    res.render("blog")
-}
-const getContact = (req,res) =>{
-    res.render("contact")
-}
-const getProject = (req,res) =>{
-    res.render("projects")
-}
-const getServices = (req,res) =>{
-    res.render("services", {
-        link:"services"
-    })
+
+const getRegister = (req,res) =>{
+    res.render("register", { 
+        link: "register"
+    
+    }
+    )
 }
 
 
 
-export { getIndex, getAbout, getContact, getBlog, getServices, getProject }
+
+export { getIndex, getAbout, getRegister }

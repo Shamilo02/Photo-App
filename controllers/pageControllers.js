@@ -13,7 +13,12 @@ const getAbout = (req,res) =>{
 const getRegister = (req,res) =>{
     res.render("register", { 
         link: "register"
-    
+    }
+    )
+}
+const getLogin = (req,res) =>{
+    res.render("login", { 
+        link: "login"
     }
     )
 }
@@ -21,4 +26,4 @@ const getRegister = (req,res) =>{
 
 
 
-export { getIndex, getAbout, getRegister }
+export { getIndex, getAbout, getRegister, getLogin }

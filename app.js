@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import Pagerouter from "./routes/routerPage.js";
 import Photorouter from "./routes/routerPhotos.js";
 import Userrouter from "./routes/routerUser.js";
+import { checkUser } from "./middleware/middleware.js";
 const app = express();
 
 const port = 3000; 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 //& Router 
+app.use("*", checkUser)
 app.use("/", Pagerouter)
 app.use("/photos", Photorouter)
 app.use("/users", Userrouter)

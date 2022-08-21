@@ -25,10 +25,11 @@ import User from "../models/userModels.js"
         } else if(!validPassword) {
             return  res.status(404).send("password is wrong")
         }else{ 
-        
+
             const token =createToken(user._id) 
             res.cookie("jwt", token, {
-                httpOnly: true
+                httpOnly: true,
+                maxAge: 1000 * 60 * 60 * 24
             })
 
             return res.status(200).redirect("/users/dashboard")

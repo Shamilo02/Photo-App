@@ -1,7 +1,9 @@
 import brcypt from "bcrypt"
+import jwt from "jsonwebtoken"
 import User from "../models/userModels.js"
+ 
 
-const createUser = async (req,res) => {
+    const createUser = async (req,res) => {
     try {
            const newUser = await User.create(req.body)
            res.status(200).json(newUser)
@@ -10,7 +12,7 @@ const createUser = async (req,res) => {
     }
     }
 
-const userLogin = async  (req,res)=> {
+    const userLogin = async  (req,res)=> {
     try {
         const { username, password} =req.body;
         const user = await User.findOne({ username });
@@ -23,11 +25,32 @@ const userLogin = async  (req,res)=> {
         } else if(!validPassword) {
             return  res.status(404).send("password is wrong")
         }else{ 
-            return res.status(200).json(user)
+        
+            const token =createToken(user._id) 
+            res.cookie("jwt", token, {
+                httpOnly: true
+            })
+
+            return res.status(200).redirect("/users/dashboard")
         }
        
         } catch (err) {
         res.status(500).send(err.message);
         }
-}
-export { createUser , userLogin }
+        }
+
+    const createToken = (userId) =>{
+   return jwt.sign({userId},
+     process.env.JWT_SECRET, {
+        expiresIn:"1d"
+   })
+    }
+
+    const getDashboardPage = (req,res ) => {
+            res.render("dashboard", {
+                link:"dashboard"
+            })
+    }
+    
+
+export { createUser , userLogin , getDashboardPage }

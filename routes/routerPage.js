@@ -1,5 +1,6 @@
 import express from 'express'
 const router = express.Router();
+import { authToken } from '../middleware/middleware.js';
 import 
 {   getIndex, 
     getAbout, 
@@ -8,7 +9,7 @@ import
      } 
 from "../controllers/pageControllers.js"
 
-router.get("/", getIndex)
+router.get("/",  getIndex)
 router.get("/about", getAbout)
 router.get("/register", getRegister)
 router.get("/login", getLogin)

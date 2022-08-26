@@ -42,7 +42,7 @@
                    </div>
                     <div class="col-md-12">
                       <div class="group_form">
-                        <button class="send_btn"> Register </button>
+                        <button type="submit" class="send_btn"> Register </button>
                         <!-- <button class="send_btn">Location</button> -->
                       </div>
                     </div>
@@ -57,7 +57,7 @@
 
         <script>
 
-          
+
           const form = document.querySelector('form')
           const emailError = document.querySelector('#email')
           const passwordError = document.querySelector('#password')
@@ -80,7 +80,7 @@
                    headers: { "Content-Type": "application/json" }
                 })
                 const data = await res.json();
-                if (data) {
+                if (data && Object.getOwnPropertyNames(data).length !== 0) {
                    if (data.email) {
                       emailError.textContent = data.email
                       emailError.style.display = "block"

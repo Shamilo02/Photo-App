@@ -1,12 +1,13 @@
 import brcypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import Photos from "../models/photoModels.js"
 import User from "../models/userModels.js"
  
 
     const createUser = async (req,res) => {
     try {
-           await User.create(req.body)
-           res.redirect("/login")
+        const user = await User.create(req.body)
+         res.status(200).json({ user: user._id})
     } catch (error) {
         let _errors = { }; 
         if (error.name === "ValidationError") {
@@ -14,12 +15,7 @@ import User from "../models/userModels.js"
                 _errors[key] = error.errors[key].message;
             })
         }
-
-        console.log(_errors)
-        res.status(500).json({
-            succes: false,
-            error
-        })
+        res.status(400).json(_errors)
     }
     }
 
@@ -58,11 +54,13 @@ import User from "../models/userModels.js"
    })
     }
 
-    const getDashboardPage = (req,res ) => {
+    const getDashboardPage = async (req,res ) => {
+            const photos = await  Photos.find({user: res.locals.user._id })
             res.render("dashboard", {
-                link:"dashboard"
+                link:"dashboard",
+                photos
             })
-    }
+            }
     
 
 export { createUser , userLogin , getDashboardPage }

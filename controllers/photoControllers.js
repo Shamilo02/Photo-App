@@ -1,12 +1,17 @@
-import Photo from "../models/photoModels.js"
+import Photo from "../models/photoModels.js";
 
 const createPhoto = async ( req,res ) =>{
-        try {
-                const photo =  await Photo.create(req.body)
-                res.status(200).json(photo)
-        } catch (error) {
-                res.status(500).json(error.message)  
-        }
+                try {
+
+                      await Photo.create({
+                        ...req.body, 
+                        user: res.locals.user._id
+                      })
+
+                        res.status(200).redirect("/users/dashboard")   
+                } catch (error) {
+                        res.status(400).json(error.message)
+                }
         }
 
         const getAllPhotos = async ( req,res )=>{

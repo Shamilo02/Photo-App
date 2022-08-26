@@ -8,14 +8,17 @@ const photoSchema = new Schema({
         required: true,
         trim: true
     }, 
-    desc: {
+    content: {
         type: String, 
         required: true,
         trim: true
     }, 
-    photo: {
+    updateAt: {
         type: Date, 
         default: Date.now
+    },
+    user: {
+        type: Schema.Types.ObjectId, ref: 'users'
     }
 })
 

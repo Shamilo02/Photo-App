@@ -8,7 +8,18 @@ import User from "../models/userModels.js"
            await User.create(req.body)
            res.redirect("/login")
     } catch (error) {
-        res.status(500).json(error.message)
+        let _errors = { }; 
+        if (error.name === "ValidationError") {
+            Object.keys(error.errors).forEach((key) =>{
+                _errors[key] = error.errors[key].message;
+            })
+        }
+
+        console.log(_errors)
+        res.status(500).json({
+            succes: false,
+            error
+        })
     }
     }
 

@@ -15,6 +15,7 @@ import User from "../models/userModels.js"
                 _errors[key] = error.errors[key].message;
             })
         }
+
         res.status(400).json(_errors)
     }
     }
@@ -33,7 +34,7 @@ import User from "../models/userModels.js"
             return  res.status(404).send("password is wrong")
         }else{ 
 
-            const token =createToken(user._id) 
+            const token = createToken(user._id) 
             res.cookie("jwt", token, {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24
@@ -43,7 +44,7 @@ import User from "../models/userModels.js"
         }
        
         } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).send(err);
         }
         }
 
@@ -62,5 +63,75 @@ import User from "../models/userModels.js"
             })
             }
     
+    const getAllUsers = async ( req,res )=>{
+                try {
+                        const users  = await User.find({ _id : { $ne : res.locals.user._id} })
+                        res.status(200).render("users" , {
+                        users,
+                        link: "users"
+                        })
+                        } catch (error) {
+                        res.status(500).json(error)
+                }}
+        
+        
+    const getUser = async (req,res )=>{
+                try {
+                const user  =  await User.findById({ _id: req.params.id })
+                .populate(['followings, followers'])
+                const photos = await Photos.find({ user : user._id })
+                
+                res.status(200).render("user", {
+                user,
+                photos, 
+                link: "users"
+                })
+                } catch (error) {
+                res.status(500).json(error)      
+                }    
+        }
 
-export { createUser , userLogin , getDashboardPage }
+
+                const followUser = async (req,res )=>{
+                try {
+                let user = await  User.findOneAndUpdate({ _id: req.params.id}, 
+                    { $push : { followers: res.locals.user._id}
+                    },  {new: true })
+
+                 user = await  User.findOneAndUpdate({ _id: res.locals.user._id }, 
+                    { $push : { followings: req.params.id }
+                    },  {new: true })
+
+                    res.status(200).json(user)
+
+                } catch (error) {
+                res.status(500).json(error)      
+                }    
+                }
+
+
+                const unfollowUser = async (req,res )=>{
+                try {
+                let user = await  User.findOneAndUpdate({ _id: req.params.id}, 
+                    { $pull : { followers: res.locals.user._id}
+                    },  {new: true })
+
+                 user = await  User.findOneAndUpdate({ _id: res.locals.user._id }, 
+                    { $pull : { followings: req.params.id }
+                    },  {new: true })
+
+                    res.status(200).json(user)
+
+                } catch (error) {
+                res.status(500).json(error)      
+                }    
+                }
+
+export { createUser,
+        userLogin , 
+        getDashboardPage,
+        getAllUsers, 
+        getUser, 
+        followUser, 
+        unfollowUser
+            }

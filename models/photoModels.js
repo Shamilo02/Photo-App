@@ -13,6 +13,11 @@ const photoSchema = new Schema({
         required: true,
         trim: true
     }, 
+
+    url: {
+        type:String, 
+        required: true
+    } , 
     updateAt: {
         type: Date, 
         default: Date.now

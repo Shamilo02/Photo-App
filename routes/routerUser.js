@@ -8,7 +8,7 @@ import { createUser,
         unfollowUser,
         userLogin }
 
-        
+
  from "../controllers/userController.js";
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post("/login", userLogin)
 router.get("/dashboard", authToken, getDashboardPage)
 router.get("/", authToken, getAllUsers)
 router.get("/:id", authToken,  getUser)
-router.put("/:id/follow", followUser )
-router.put("/:id/unfollow", unfollowUser)
+router.put("/:id/follow", authToken,  followUser )
+router.put("/:id/unfollow",authToken,  unfollowUser)
 
 export default router; 

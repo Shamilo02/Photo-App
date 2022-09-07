@@ -57,8 +57,13 @@ import User from "../models/userModels.js"
 
     const getDashboardPage = async (req,res ) => {
             const photos = await  Photos.find({user: res.locals.user._id })
+            const user = await User.findById({ _id: res.locals.user._id })
+            .populate(["followings","followers"])
+
+
             res.render("dashboard", {
                 link:"dashboard",
+                user, 
                 photos
             })
             }
@@ -78,12 +83,17 @@ import User from "../models/userModels.js"
     const getUser = async (req,res )=>{
                 try {
                 const user  =  await User.findById({ _id: req.params.id })
-                .populate(['followings, followers'])
                 const photos = await Photos.find({ user : user._id })
+                    
+               const inFollowers = user.followers.some((follower) => {
+                return follower.equals(res.locals.user._id)
+               })
                 
+
                 res.status(200).render("user", {
                 user,
                 photos, 
+                inFollowers, 
                 link: "users"
                 })
                 } catch (error) {
@@ -101,8 +111,8 @@ import User from "../models/userModels.js"
                  user = await  User.findOneAndUpdate({ _id: res.locals.user._id }, 
                     { $push : { followings: req.params.id }
                     },  {new: true })
-
-                    res.status(200).json(user)
+                    
+                    res.status(200).redirect(`/users/${req.params.id}`)
 
                 } catch (error) {
                 res.status(500).json(error)      
@@ -112,7 +122,7 @@ import User from "../models/userModels.js"
 
                 const unfollowUser = async (req,res )=>{
                 try {
-                let user = await  User.findOneAndUpdate({ _id: req.params.id}, 
+                let user  = await  User.findOneAndUpdate({ _id: req.params.id}, 
                     { $pull : { followers: res.locals.user._id}
                     },  {new: true })
 
@@ -120,7 +130,7 @@ import User from "../models/userModels.js"
                     { $pull : { followings: req.params.id }
                     },  {new: true })
 
-                    res.status(200).json(user)
+                    res.status(200).redirect(`/users/${req.params.id}`)
 
                 } catch (error) {
                 res.status(500).json(error)      

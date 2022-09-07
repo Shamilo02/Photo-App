@@ -8,14 +8,11 @@ import Userrouter from "./routes/routerUser.js";
 import { checkUser } from "./middleware/middleware.js";
 import { v2 as cloudinary } from "cloudinary";
 import fileUpload from "express-fileupload";
-
+import methodOverride from "method-override";
 
 const app = express();
 
-const port = 3000; 
-
 dotenv.config();
-
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME, 
@@ -35,6 +32,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(fileUpload({ useTempFiles: true }))
+app.use(methodOverride("_method", {
+    methods: ["POST","GET"]
+}))
+
 
 //& Router 
 app.use("*", checkUser)
@@ -43,6 +44,6 @@ app.use("/photos", Photorouter)
 app.use("/users", Userrouter)
 
 
-app.listen(port, ()=> {
-    console.log(`connected database ${port}`)
+app.listen(3000, ()=> {
+    console.log(`connected database`)
 })  

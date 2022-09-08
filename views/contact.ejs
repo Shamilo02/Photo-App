@@ -23,9 +23,11 @@
           </div>
         </div>
         <div class="col-md-8 offset-md-2">
-          <form id="request" class="main_form" method="post" action="/contact" 
-          enctype="multipart/form-data">
+          <form id="request" class="main_form" method="post" action="/contact">
             <div class="row">
+                <div class="col-md-12">
+                    <div style="display: none;" class="alert alert-success" id="sendmail"> Mail Sending! </div>
+                </div>
               <div class="col-md-12">
                 <input class="form_control" placeholder="Your name" type="text" name="name"> 
               </div>
@@ -38,7 +40,7 @@
               <div class="col-md-12">
                 <div class="group_form">
                   <button class="send_btn">Send</button>
-                  <button class="send_btn">Location</button>
+                  <!-- <button class="send_btn">Location</button> -->
                 </div>
               </div>
             </div>
@@ -48,5 +50,41 @@
     </div>
   </div>
       
+
+  <script>
+         const form = document.querySelector('form')
+            const sendMessage = document.querySelector('#sendMessage')
+            document.querySelector("button").innerText = "burda seks cekmirler!!"
+            form.addEventListener("submit", async (e) => {
+               e.preventDefault();
+               const name = form.name.value
+               const email = form.email.value
+               const message = form.message.value
+               try {
+                  const res = await fetch('/contact', {
+                     method: "POST",
+                     body: JSON.stringify({ name, email, message }),
+                     headers: { "Content-Type": "application/json" }
+                  })
+                  const data = await res.json();
+                  console.log("DATA", data)
+                  if (data.succeeded) {
+                     sendmail.textContent = "Your Message Received Succsfully"
+                     sendmail.style.display = "block"
+                     setTimeout(() => {
+                        sendmail.style.display = "none"
+                        form.name.value = ""
+                        form.email.value = ""
+                        form.message.value = ""
+                     }, 5000)
+                  }
+               } catch (err) {
+                  console.log("ERR::", err)
+               }
+            })
+   
+
+            
+  </script>
 
 <%- include("partials/_footer") %> 

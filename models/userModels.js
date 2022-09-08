@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import validator from "validator"
 import bcrypt from "bcrypt";
 const { Schema } = mongoose;
 
@@ -7,24 +6,41 @@ const userSchema = new Schema({
     username:
     {
         type: String,
-        required: [true, "username area is required!"],
+        required: true,
         unique: true
     },
-
+    fullname:
+    {
+        type: String,
+        required: true,
+        trim:true
+    },
     email:
     {
         type: String,
-        required: [true, "email area is required!"],
+        required:true, 
         unique: true,
-        validate: [validator.isEmail, "valid email is required!"]
 
     },
 
+    bio: {
+        type:String, 
+        required: true,
+        trim:true
+    }, 
+    url : {
+        type:String, 
+        required: [true, 'Resim bolmesi bosh ola bilmez.']
+    }, 
+
+    image_id: {
+        type: String
+    },
     password:
     {
         type: String,
-        required: [true, "password is required!"],
-        minLength: [5, "At least 5 character"]
+        required: true,
+        trim:true
     }, 
     followings : [ 
        { type: Schema.Types.ObjectId, ref:'users' } 

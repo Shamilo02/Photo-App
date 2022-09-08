@@ -17,7 +17,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="titlepage text_align_center">
-                <span>04</span>
+                <!-- <span>04</span> -->
                 <h2>Welcome <%- user.username %>
                 </h2>
               </div>
@@ -26,14 +26,9 @@
           <div class="row">
             <div class="col-md-12">
               <div class="satteb text_align_center">
-                <p>fact that a reader will be distracted by the readable content of a page when looking at its layout.
-                  The point of using Lorem Ipsum is that itfact that a reader will be distracted by the readable content
-                  of a page when looking at its layout. The point of using Lorem Ipsum is that itfact that a reader will
-                  be distracted by the readable content of a page when looking at its layout. The point of using Lorem
-                  Ipsum is that itfact that a reader will be distracted by the readable content of a page when looking
-                  at its layout. The point of using Lorem Ipsum is that it</p>
-                <h3>The point of using </h3>
-                <i><img src="/images/custo.jpg" alt="#" /></i>
+                <p> <%= user.bio %> </p>
+                <h3><%= user.fullname %>  </h3>
+                <i><img style="width: 150px; height: 150px" src="<%= user.url %> " alt="#" /></i>
               </div>
             </div>
           </div>
@@ -41,10 +36,15 @@
       </div>
 
       <div class="row">
+        <div class="col-md-12 mt-0 text_align_center">
+          <button data-toggle="modal" data-target=".updateModal" type="button"
+            style=" margin-top:100px; margin-left: 50%; transform: translateX(-50%);" class="read_more"
+            >Update </button>
+        </div>
         <div class="col-md-12 text_align_center">
           <button data-toggle="modal" data-target=".bd-example-modal-lg" type="button"
             style=" margin-top:100px; margin-left: 50%; transform: translateX(-50%);" class="read_more"
-            href="about.html">Add New Photo</button>
+            >Add New Photo</button>
         </div>
       </div>
 
@@ -93,8 +93,9 @@
            <div class="row">
               <div class="col-md-12">
                  <div class="titlepage text_align_center">
-                   <span>05</span>
+                   <span>  <%= user.followers.length  %>  </span>
                     <h2> Followers </h2>
+   
                  </div>
               </div>
 
@@ -128,12 +129,12 @@
            <div class="row">
               <div class="col-md-12">
                  <div class="titlepage text_align_center">
-                   <span>05</span>
-                    <h2> Followings </h2>
+                   <span><%=  user.followings.length  %> </span>
+                    <h2> Followings  </h2>
                  </div>
               </div>
 
-                 <% for( let fuser of user.followings  ) { %>
+                 <% for( let fuser of user.followings) { %>
                  <div class="col-md-4">
                  <div class="team_box text_align_center">
                     <div class="team_img">
@@ -159,7 +160,7 @@
         </div>
      </div>
 
-
+<!--^ ADD NEW PHOTO -->
       <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -212,5 +213,73 @@
           </div>
         </div>
       </div>
+<!--^ ADD NEW PHOTO -->
+
+
+<!--^ UPDATE USER  -->
+      <div class="modal fade updateModal" tabindex="-1" 
+      role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div style="margin-top: 50px; margin-bottom: 50px;" class="container">
+              <div class="row">
+                <div class="col-md-12 ">
+                  <div class="text_align_center">
+                    <h2 style="
+                    font-size: 30px;
+                    margin-bottom: 20px;
+                    color: #D43A8E;
+                ">UPDATE USER</h2>
+                  </div>
+                </div>
+                <div class="col-md-10 offset-md-1">
+                  <form id="request" class="main_form" method="post" 
+                  action="/users/<%= user._id%>?_method=PUT" 
+                  enctype="multipart/form-data">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <input class="form_control" placeholder="username" value="<%= user.username %> " type="text" name="username">
+                      </div>
+
+                      <div class="col-md-12">
+                        <input class="form_control" placeholder="fullname" value="<%= user.fullname %> " type="text" name="fullname">
+                      </div>
+                      <div class="col-md-12">
+                        <textarea 
+                        name="bio" 
+                        style="height: 150px;" 
+                        class="form_control" placeholder="bio"
+                          rows="5"> <%= user.bio %> </textarea>
+                      </div>
+
+                      <div style="margin-bottom: 20px ;" class="col-md-12">
+                        <input type="file" name="image" class="form-control-file">
+                      </div>
+
+                      
+
+                      <div class="col-md-12">
+                        <div class="group_form">
+                          <button class="read_more">Upload File</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--^ UPDATE -->
+
+
+
 
       <%- include("partials/_footer") %>

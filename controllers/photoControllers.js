@@ -2,7 +2,7 @@ import Photo from "../models/photoModels.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-const createPhoto = async ( req,res ) =>{
+const createPhoto = async (req , res) =>{
 
         const result = await cloudinary.uploader.upload(
                 req.files.image.tempFilePath, 
@@ -18,7 +18,7 @@ const createPhoto = async ( req,res ) =>{
 
                       await Photo.create({
                         ...req.body, 
-                        user: res.locals.user._id, 
+                        user: res.locals.user._id,
                         image_id: result.public_id,
                         url: result.secure_url
                       })

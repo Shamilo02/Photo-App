@@ -1,22 +1,36 @@
 import brcypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 import Photos from "../models/photoModels.js"
 import User from "../models/userModels.js"
- 
 
     const createUser = async (req,res) => {
-    try {
-        const user = await User.create(req.body)
-         res.status(200).json({ user: user._id})
-    } catch (error) {
-        let _errors = { }; 
-        if (error.name === "ValidationError") {
-            Object.keys(error.errors).forEach((key) =>{
-                _errors[key] = error.errors[key].message;
-            })
-        }
 
-        res.status(400).json(_errors)
+
+        const result = await cloudinary.uploader.upload(
+            req.files.image.tempFilePath, 
+            {
+                    use_filename: true, 
+                    folder: 'photos'
+            }
+    )
+
+    fs.unlinkSync(req.files.image.tempFilePath)
+
+
+    try {
+        await User.create({
+            ...req.body,
+            url: result.secure_url, 
+            image_id: result.public_id
+            })
+
+            res.status(200).redirect("/login")
+        
+    } catch (error) {
+
+        res.status(400).json(error.message)
     }
     }
 
@@ -44,7 +58,7 @@ import User from "../models/userModels.js"
         }
        
         } catch (err) {
-        res.status(500).send(err);
+        res.status(401).send(err.message);
         }
         }
 
@@ -54,6 +68,67 @@ import User from "../models/userModels.js"
         expiresIn:"1d"
    })
     }
+     
+    const getUser = async (req,res )=>{
+                try {
+                const user  =  await User.findById({ _id: req.params.id })
+                .populate(['followers','followings'])
+                const photos = await Photos.find({ user : user._id })
+                    
+               const inFollowers = user.followers.some((follower) => {
+                return follower.equals(res.locals.user._id)
+               })
+                
+
+                res.status(200).render("user", {
+                user,
+                photos, 
+                inFollowers, 
+                link: "users"
+                })
+                } catch (error) {
+                res.status(500).json(error)      
+                }    
+        }
+
+
+    const updateUser = async  (req,res )=> {
+        try {
+
+            const user = await User.findById(res.locals.user._id);
+
+                if (req.files) {
+                    const userImageId  = user.image_id; 
+                  await cloudinary.uploader.destroy(userImageId);
+            
+                  const result = await cloudinary.uploader.upload(
+                    req.files.image.tempFilePath,
+                    {
+                      use_filename: true,
+                      folder: 'photos',
+                    }
+                  );
+            
+                  user.url = result.secure_url;
+                  user.image_id = result.public_id;
+            
+                  fs.unlinkSync(req.files.image.tempFilePath);
+                }
+            
+                user.username = req.body.username;
+                user.fullname = req.body.fullname;
+                user.bio = req.body.bio; 
+
+
+                user.save();
+            
+                res.status(200).redirect(`/users/dashboard`);
+
+        } catch (error) {
+            res.status(200).json(error.message)
+        }
+    }
+
 
     const getDashboardPage = async (req,res ) => {
             const photos = await  Photos.find({user: res.locals.user._id })
@@ -77,32 +152,12 @@ import User from "../models/userModels.js"
                         })
                         } catch (error) {
                         res.status(500).json(error)
-                }}
+        }}
         
-        
-    const getUser = async (req,res )=>{
-                try {
-                const user  =  await User.findById({ _id: req.params.id })
-                const photos = await Photos.find({ user : user._id })
-                    
-               const inFollowers = user.followers.some((follower) => {
-                return follower.equals(res.locals.user._id)
-               })
-                
-
-                res.status(200).render("user", {
-                user,
-                photos, 
-                inFollowers, 
-                link: "users"
-                })
-                } catch (error) {
-                res.status(500).json(error)      
-                }    
-        }
+   
 
 
-                const followUser = async (req,res )=>{
+   const followUser = async (req,res )=>{
                 try {
                 let user = await  User.findOneAndUpdate({ _id: req.params.id}, 
                     { $push : { followers: res.locals.user._id}
@@ -117,10 +172,10 @@ import User from "../models/userModels.js"
                 } catch (error) {
                 res.status(500).json(error)      
                 }    
-                }
+    }
 
 
-                const unfollowUser = async (req,res )=>{
+    const unfollowUser = async (req,res )=>{
                 try {
                 let user  = await  User.findOneAndUpdate({ _id: req.params.id}, 
                     { $pull : { followers: res.locals.user._id}
@@ -135,7 +190,7 @@ import User from "../models/userModels.js"
                 } catch (error) {
                 res.status(500).json(error)      
                 }    
-                }
+     }
 
 export { createUser,
         userLogin , 
@@ -143,5 +198,6 @@ export { createUser,
         getAllUsers, 
         getUser, 
         followUser, 
-        unfollowUser
+        unfollowUser,
+        updateUser
             }

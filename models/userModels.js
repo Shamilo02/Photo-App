@@ -30,7 +30,7 @@ const userSchema = new Schema({
     }, 
     url : {
         type:String, 
-        required: [true, 'Resim bolmesi bosh ola bilmez.']
+        required:true
     }, 
 
     image_id: {
@@ -39,7 +39,7 @@ const userSchema = new Schema({
     password:
     {
         type: String,
-        required: true,
+        require: true,
         trim:true
     }, 
     followings : [ 
@@ -54,15 +54,12 @@ const userSchema = new Schema({
 })
 
 
-userSchema.pre("save", async function () {
+// userSchema.pre("save", async function () {
 
-    let user = this;
-    console.log(user.password)
-    let haspass = await bcrypt.hash(user.password, 10)
-    user.password = haspass;
-    console.log(user.password)
-
-})
+//     let user = this;
+//     let haspass = bcrypt.hash(user.password, 10)
+//     user.password = haspass;
+// })
 
 
 export default mongoose.model("users", userSchema)

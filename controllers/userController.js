@@ -61,37 +61,6 @@ import User from "../models/userModels.js"
         res.status(401).send(err.message);
         }
         }
-
-    const createToken = (userId) =>{
-   return jwt.sign({userId},
-     process.env.JWT_SECRET, {
-        expiresIn:"1d"
-   })
-    }
-     
-    const getUser = async (req,res )=>{
-                try {
-                const user  =  await User.findById({ _id: req.params.id })
-                .populate(['followers','followings'])
-                const photos = await Photos.find({ user : user._id })
-                    
-               const inFollowers = user.followers.some((follower) => {
-                return follower.equals(res.locals.user._id)
-               })
-                
-
-                res.status(200).render("user", {
-                user,
-                photos, 
-                inFollowers, 
-                link: "users"
-                })
-                } catch (error) {
-                res.status(500).json(error)      
-                }    
-        }
-
-
     const updateUser = async  (req,res )=> {
         try {
 
@@ -114,7 +83,8 @@ import User from "../models/userModels.js"
             
                   fs.unlinkSync(req.files.image.tempFilePath);
                 }
-            
+
+                 
                 user.username = req.body.username;
                 user.fullname = req.body.fullname;
                 user.bio = req.body.bio; 
@@ -127,34 +97,69 @@ import User from "../models/userModels.js"
         } catch (error) {
             res.status(200).json(error.message)
         }
+        }
+    
+        const createToken = (userId) =>{
+   return jwt.sign({userId},
+     process.env.JWT_SECRET, {
+        expiresIn:"1d"
+   })
     }
+     
+ 
 
 
+    
+
+
+    
     const getDashboardPage = async (req,res ) => {
-            const photos = await  Photos.find({user: res.locals.user._id })
-            const user = await User.findById({ _id: res.locals.user._id })
-            .populate(["followings","followers"])
-
-
-            res.render("dashboard", {
-                link:"dashboard",
-                user, 
-                photos
-            })
+        const photos = await  Photos.find({user: res.locals.user._id })
+        const user = await User.findById({ _id: res.locals.user._id })
+        .populate(["followings","followers"])
+        
+        
+        res.render("dashboard", {
+            link:"dashboard",
+            user, 
+            photos
+        })
             }
     
-    const getAllUsers = async ( req,res )=>{
+            const getAllUsers = async ( req,res )=>{
                 try {
-                        const users  = await User.find({ _id : { $ne : res.locals.user._id} })
+                    const users  = await User.find({ _id : { $ne : res.locals.user._id} })
                         res.status(200).render("users" , {
-                        users,
-                        link: "users"
+                            users,
+                            link: "users"
                         })
-                        } catch (error) {
+                    } catch (error) {
                         res.status(500).json(error)
-        }}
+                    }}
         
-   
+                    const getUser = async (req,res )=> {
+                                try {
+                                const user  =  await User.findById({ _id: req.params.id })
+                                .populate(['followers','followings'])
+                                const photos = await Photos.find({ user : user._id })
+                                    
+                               const inFollowers = user.followers.some((follower) => {
+                                return follower.equals(res.locals.user._id)
+                               })
+                                
+                
+                                res.status(200).render("user", {
+                                user,
+                                photos, 
+                                inFollowers, 
+                                link: "users"
+                                })
+                                } catch (error) {
+                                res.status(500).json(error)      
+                                }    
+                        
+                            }
+                    
 
 
    const followUser = async (req,res )=>{

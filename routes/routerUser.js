@@ -17,7 +17,7 @@ router.post("/register", createUser)
 router.post("/login", userLogin)
 router.get("/dashboard", authToken, getDashboardPage)
 router.get("/", authToken, getAllUsers)
-router.get("/:id", authToken,  getUser).put("/:id" ,  updateUser)
+router.get("/:id", authToken,  getUser).put("/:id" , updateUser)
 router.put("/:id/follow", authToken,  followUser )
 router.put("/:id/unfollow",authToken,  unfollowUser)
 

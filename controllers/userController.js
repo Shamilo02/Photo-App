@@ -25,6 +25,7 @@ const createUser = async (req, res) => {
     try {
         await User.create({
             ...req.body,
+            password: hashpass,
             url: result.secure_url,
             image_id: result.public_id
         })
@@ -40,12 +41,9 @@ const userLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
-
-        if (!user) {
-            return res.status(403).send("user not found")
-        } else if (!password) {
-            return res.status(404).send("password is wrong")
-        } else {
+        !user && res.status(401).send("user not found!")
+        const validPass = await bcrypt.compare(password, user.password)
+        !validPass && res.status(401).send("password is wrong!")
 
             const token = createToken(user._id)
             res.cookie("jwt", token, {
@@ -54,7 +52,7 @@ const userLogin = async (req, res) => {
             })
 
             return res.status(200).redirect("/users/dashboard")
-        }
+        
 
     } catch (err) {
         res.status(401).send(err.message);

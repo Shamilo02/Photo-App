@@ -16,7 +16,7 @@
             <div class="row d_flex">
               <div class="col-md-5">
                 <div class="creative">
-                  <h1>Best PHOTO GRAPHY STudio</h1>
+                  <h1>PHOTO MAN </h1>
                   <a class="read_more" href="/contact">Contact Us</a>
                 </div>
               </div>
@@ -30,7 +30,7 @@
                </ol>
                <div class="carousel-inner">
                   <!-- first slide -->
-                  <div class="carousel-item active">
+               <div class="carousel-item active">
                      <div class="container">
                         <div class="carousel-caption relative">
                            <div class="row d_flex">
@@ -43,34 +43,26 @@
                         </div>
                      </div>
                   </div>
-                  <!-- second slide -->
-                  <div class="carousel-item">
+                  <% for( let photo of photos ) { %>
+                     <div class="carousel-item">
                      <div class="container">
                         <div class="carousel-caption relative">
                            <div class="row d_flex">
                              <div class="col-md-12">
                                  <div class="cemara">
-                                  <figure><img src="images/img.png" alt="#"/></figure>
+                                  <figure><img src="<%= photo.url %>" alt="<%= photo.title %>"/></figure>
                                  </div>
                               </div>
                            </div>
                         </div>
                      </div>
                   </div>
+                  <% } %>
+                
+                  <!-- second slide -->
+                
                   <!-- third slide-->
-                  <div class="carousel-item">
-                     <div class="container">
-                        <div class="carousel-caption relative">
-                           <div class="row d_flex">
-                             <div class="col-md-12">
-                                  <div class="cemara">
-                                  <figure><img src="images/img.png" alt="#"/></figure>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
+                 
                </div>
                <!-- controls -->
                <a class="carousel-control-prev" href="#banner1" role="button" data-slide="prev">

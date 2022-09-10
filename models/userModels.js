@@ -26,19 +26,19 @@ const userSchema = new Schema({
         type:String, 
         required: true,
         trim:true
-    }, 
-    url : {
-        type:String, 
-        required:true
-    }, 
-
-    image_id: {
-        type: String
     },
+    
+    image:{
+        type:String,
+        url:String, 
+        public_id:String,
+        required:true
+    }
+    ,
     password:
     {
         type: String,
-        require: true,
+        required: true,
         trim:true
     }, 
     followings : [ 

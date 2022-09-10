@@ -7,36 +7,50 @@ import bcrypt, { genSalt } from "bcrypt"
 
 
 const createUser = async (req, res) => {
+ 
+ 
+    let image = null;
+
+        if (req.files?.image) {
+              const result = await cloudinary.uploader.upload(
+            req.files.image.tempFilePath,
+            {
+                use_filename: true,
+                folder: 'photos'
+            }
+        )
+
+        fs.unlinkSync(req.files.image.tempFilePath)
 
 
-    const result = await cloudinary.uploader.upload(
-        req.files.image.tempFilePath,
-        {
-            use_filename: true,
-            folder: 'photos'
+        image = {
+            url: result.secure_url,
+            public_id: result.public_id
         }
-    )
 
-    fs.unlinkSync(req.files.image.tempFilePath)
 
-    const salt = await genSalt(10);
-    const hashpass = await bcrypt.hash(req.body.password, salt)
-
+        } 
+      
     try {
+        
+        const salt = await genSalt(10);
+        const hashpass = await bcrypt.hash(req.body.password, salt)
         await User.create({
             ...req.body,
             password: hashpass,
-            url: result.secure_url,
-            image_id: result.public_id
+            image,
         })
 
-        res.status(200).redirect("/login")
+        res.redirect("/login")
 
     } catch (error) {
-
-        res.status(400).json(error.message)
+        res.status(402).json({
+            succes: false, 
+           error: error.message
+        })
     }
 }
+
 const userLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -58,6 +72,7 @@ const userLogin = async (req, res) => {
         res.status(401).send(err.message);
     }
 }
+
 const updateUser = async (req, res) => {
     try {
 

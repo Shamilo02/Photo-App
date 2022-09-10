@@ -32,7 +32,7 @@ const createUser = async (req, res) => {
         } 
       
     try {
-        
+
         const salt = await genSalt(10);
         const hashpass = await bcrypt.hash(req.body.password, salt)
         await User.create({
@@ -44,10 +44,17 @@ const createUser = async (req, res) => {
         res.redirect("/login")
 
     } catch (error) {
-        res.status(402).json({
-            succes: false, 
-           error: error.message
-        })
+
+        const errors2 = { } 
+
+        if (error.name === "ValidationError") {
+            Object.keys(error.errors).forEach((key) => {
+                errors2[key] = error.errors[key].message
+            })
+        }
+        res.status(402).json(errors2)
+        
+
     }
 }
 

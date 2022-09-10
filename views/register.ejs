@@ -29,29 +29,49 @@
                     <div class="col-md-12">
                       <input class="form_control" placeholder="Username" type="text" name="username"> 
                     </div>
+                    <div class="col-md-12">
+                      <div style="display: none;" class="alert alert-danger" id="username"></div>
+                   </div>
                    
                     <div class="col-md-12">
                       <label for="image"></label>
                       <input class="form_control" type="file" id="image" name="image"> 
                     </div>
-                    
+                    <div class="col-md-12">
+                      <div style="display: none;" class="alert alert-danger" id="image"></div>
+                   </div>
 
                     <div class="col-md-12">
                       <input class="form_control" placeholder="Full Name" type="text" name="fullname"> 
                     </div>
                    
+                    <div class="col-md-12">
+                      <div style="display: none;" class="alert alert-danger" id="fullname"></div>
+                   </div>
                    <!-- image -->
                     <div class="col-md-12">
                       <input class="form_control" placeholder="email" type="text" name="email">                          
                     </div>
+
+                    <div class="col-md-12">
+                      <div style="display: none;" class="alert alert-danger" id="email"></div>
+                   </div>
                     
                     <div class="col-md-12">
                       <input class="form_control" placeholder="password" type="password" name="password">                          
                     </div>
+
+                    <div class="col-md-12">
+                      <div style="display: none;" class="alert alert-danger" id="password"></div>
+                   </div>
                   
                     <div class="col-md-12">
                       <textarea class="form_control" name="bio" placeholder="bio" cols="30" rows="10"></textarea>                      
                     </div>
+
+                    <div class="col-md-12">
+                      <div style="display: none;" class="alert alert-danger" id="bio"></div>
+                   </div>
                    
                     <div class="col-md-12">
                       <div class="group_form">
@@ -67,6 +87,64 @@
         </div>
 
 
+        <script>
+
+const form = document.querySelector('form')
+            const emailError = document.querySelector('#email')
+            const passwordError = document.querySelector('#password')
+            const usernameError = document.querySelector('#username')
+            const bioError = document.querySelector('#bio')
+            const fullnameError = document.querySelector('#fullname')
+            const imageError = document.querySelector('#image')
+            
+
+            form.addEventListener("submit", async (e) => {
+               e.preventDefault();
+               emailError.textContent = "";
+               passwordError.textContent = "";
+               usernameError.textContent = "";
+               fullnameError.textContent=""; 
+               bioError.textContent="";
+               imageError.textContent="";
+
+               
+               emailError.style.display = "none"
+               passwordError.style.display = "none"
+               usernameError.style.display = "none"
+               const email = form.email.value
+               const password = form.password.value
+               const username = form.username.value
+               try {
+                  const res = await fetch('users/register', {
+                     method: "POST",
+                     body: JSON.stringify({ email, password, username }),
+                     headers: { "Content-Type": "application/json" }
+                  })
+                  const data = await res.json();
+                  if (data) {
+                     if (data.email) {
+                        emailError.textContent = data.email
+                        emailError.style.display = "block"
+                     }
+                     if (data.password) {
+                        passwordError.textContent = data.password
+                        passwordError.style.display = "block"
+                     }
+                     if (data.username) {
+                        usernameError.textContent = data.username
+                        usernameError.style.display = "block"
+                     }
+                  }
+                  if (data.user) {
+                     location.assign("/login")
+                  }
+               } catch (err) {
+                  console.log("ERR::", err)
+               }
+            })
+
+
+        </script>
 
 
     
